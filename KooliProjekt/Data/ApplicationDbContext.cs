@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace KooliProjekt.Data
@@ -9,5 +10,9 @@ namespace KooliProjekt.Data
             : base(options)
         {
         }
+
+        public DbSet<IdentityUser> Customers { get; set; }
+        public DbSet<Invoice> Invoices { get; set; }
+        public DbSet<InvoiceLine> InvoicesLine { get; set; }
     }
 }
