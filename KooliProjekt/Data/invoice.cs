@@ -9,7 +9,7 @@ namespace KooliProjekt.Data
         public DateTime InvoiceDate { get; set; }
         public DateTime DueDate { get; set; }
         public decimal Price { get; set; }
-        public static int Event_Id { get; set; }
+        public int Event_Id { get; set; }
         public Boolean Is_Paid { get; set; }
         public IdentityUser Customer { get; set; }
         public string Customer_Id { get; set; }
