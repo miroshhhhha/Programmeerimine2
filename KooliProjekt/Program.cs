@@ -1,4 +1,5 @@
 using KooliProjekt.Data;
+using KooliProjekt.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -9,6 +10,12 @@ namespace KooliProjekt
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            builder.Services.AddScoped<IEventService, EventService>();
+            builder.Services.AddScoped<IInvoiceLineService, InvoiceLineService>();
+            builder.Services.AddScoped<IHomeService, HomeService>();
+            builder.Services.AddScoped<IPlansService, PlansService>();
+            builder.Services.AddScoped<IInvoicesService, InvoicesService>();
+
 
             // Add services to the container.
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
@@ -46,7 +53,15 @@ namespace KooliProjekt
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
             app.MapRazorPages();
-
+            #if DEBUG
+            using (var scope = app.Services.CreateScope())
+            using (var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>())
+            using (var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>())
+            {
+                context.Database.EnsureCreated();
+                SeedData.Generate(context, userManager);
+            }
+            #endif
             app.Run();
         }
     }
