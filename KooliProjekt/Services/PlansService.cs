@@ -16,7 +16,7 @@ namespace KooliProjekt.Services
         {
             try
             {
-                return await _context.Plans.ToListAsync();
+                return (List<Plan>)_context.Plans;
             }
             catch (Exception ex)
             {

@@ -17,5 +17,6 @@ namespace KooliProjekt.Data
         public DbSet<InvoiceLine> InvoicesLine { get; set; }
         public DbSet<KooliProjekt.Data.Event> Event { get; set; } = default!;
         public DbSet<KooliProjekt.Data.Plan> Plan { get; set; } = default!;
+        public object Plans { get; internal set; }
     }
 }
