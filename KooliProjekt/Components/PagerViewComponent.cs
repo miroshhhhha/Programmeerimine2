@@ -1,4 +1,5 @@
 ﻿using KooliProjekt.Data;
+using KooliProjekt.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace KooliProjekt.Components

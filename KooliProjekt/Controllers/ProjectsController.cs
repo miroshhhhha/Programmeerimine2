@@ -14,10 +14,11 @@ namespace KooliProjekt.Controllers
             _projectService = projectService;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int page = 1, string searchTerm = null)
         {
-            var projects = await _projectService.GetAllProjectsAsync();
-            return View(projects);
+            var pagedResult = await _projectService.GetProjectsPagedAsync(page, 10, searchTerm);
+            ViewBag.SearchTerm = searchTerm;
+            return View(pagedResult);
         }
 
         public IActionResult Create()
