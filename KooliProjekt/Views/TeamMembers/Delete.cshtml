@@ -1,0 +1,26 @@
+@model KooliProjekt.Models.TeamMember
+
+@{
+    ViewData["Title"] = "Remove Member";
+}
+
+<div class="container mt-5">
+    <h2 class="text-danger">Remove Team Member</h2>
+    <h3>Are you sure you want to remove "@Model.Name"?</h3>
+    <hr />
+    <div>
+        <dl class="row">
+            <dt class="col-sm-3">Name</dt>
+            <dd class="col-sm-9">@Model.Name</dd>
+
+            <dt class="col-sm-3">Email</dt>
+            <dd class="col-sm-9">@Model.Email</dd>
+        </dl>
+        
+        <form asp-action="Delete">
+            <input type="hidden" asp-for="Id" />
+            <input type="submit" value="Remove" class="btn btn-danger" />
+            <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+</div>

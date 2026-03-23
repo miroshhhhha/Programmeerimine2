@@ -13,9 +13,9 @@ namespace KooliProjekt.Models
 
         public string Description { get; set; }
 
-        public string Status { get; set; } // e.g. "New", "InProgress", "Done"
+        public string Status { get; set; }
 
-        public string Priority { get; set; } // e.g. "Low", "Medium", "High"
+        public string Priority { get; set; }
 
         [DataType(DataType.DateTime)]
         public DateTime? Deadline { get; set; }

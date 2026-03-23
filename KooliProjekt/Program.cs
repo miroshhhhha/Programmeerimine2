@@ -16,7 +16,7 @@ namespace KooliProjekt
             builder.Services.AddScoped<IInvoicesService, InvoicesService>();
             builder.Services.AddScoped<IProjectService, ProjectService>();
             builder.Services.AddScoped<IProjectTaskService, ProjectTaskService>();
-            // Add Project Management services here later
+            builder.Services.AddScoped<ITeamMemberService, TeamMemberService>();
 
 
             // Add services to the container.

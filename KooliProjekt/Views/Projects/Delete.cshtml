@@ -1,0 +1,26 @@
+@model KooliProjekt.Models.Project
+
+@{
+    ViewData["Title"] = "Delete Project";
+}
+
+<div class="container mt-5">
+    <h2 class="text-danger">Delete Project</h2>
+    <h3>Are you sure you want to delete "@Model.Name"?</h3>
+    <hr />
+    <div>
+        <dl class="row">
+            <dt class="col-sm-3">Description</dt>
+            <dd class="col-sm-9">@Model.Description</dd>
+            
+            <dt class="col-sm-3">Start Date</dt>
+            <dd class="col-sm-9">@Model.StartDate.ToLongDateString()</dd>
+        </dl>
+        
+        <form asp-action="Delete">
+            <input type="hidden" asp-for="Id" />
+            <input type="submit" value="Delete" class="btn btn-danger" />
+            <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+</div>

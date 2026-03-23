@@ -1,0 +1,57 @@
+@model KooliProjekt.Models.TeamMember
+
+@{
+    ViewData["Title"] = "Member Details";
+}
+
+<div class="container mt-5">
+    <h2>Team Member: @Model.Name</h2>
+    <hr />
+    <div>
+        <dl class="row">
+            <dt class="col-sm-3">Name</dt>
+            <dd class="col-sm-9">@Model.Name</dd>
+
+            <dt class="col-sm-3">Email</dt>
+            <dd class="col-sm-9">@Model.Email</dd>
+        </dl>
+    </div>
+
+    <div class="mt-4">
+        <h4>Assigned Tasks</h4>
+        <hr />
+        @if (Model.Tasks != null && Model.Tasks.Any())
+        {
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Project</th>
+                        <th>Status</th>
+                        <th>Deadline</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var task in Model.Tasks)
+                    {
+                        <tr>
+                            <td>@task.Title</td>
+                            <td>@(task.Project?.Name ?? "N/A")</td>
+                            <td>@task.Status</td>
+                            <td>@task.Deadline?.ToShortDateString()</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <p class="text-muted">No tasks assigned to this member yet.</p>
+        }
+    </div>
+
+    <div class="mt-4">
+        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning">Edit</a>
+        <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+    </div>
+</div>
