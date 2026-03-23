@@ -20,6 +20,6 @@ namespace KooliProjekt.Models
         [DataType(DataType.Date)]
         public DateTime? EndDate { get; set; }
 
-        public List<ProjectTask> Tasks { get; set; } = new List<ProjectTask>();
+        public List<ProjectTask>? Tasks { get; set; } = new List<ProjectTask>();
     }
 }

@@ -21,9 +21,9 @@ namespace KooliProjekt.Models
         public DateTime? Deadline { get; set; }
 
         public int ProjectId { get; set; }
-        public Project Project { get; set; }
+        public Project? Project { get; set; }
 
         public int? TeamMemberId { get; set; }
-        public TeamMember AssignedMember { get; set; }
+        public TeamMember? AssignedMember { get; set; }
     }
 }
