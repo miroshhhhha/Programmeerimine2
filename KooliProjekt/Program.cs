@@ -61,7 +61,7 @@ namespace KooliProjekt
             using (var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>())
             {
                 context.Database.EnsureCreated();
-                // SeedData.Generate(context, userManager);
+                SeedData.Generate(context, userManager);
             }
             #endif
             app.Run();
