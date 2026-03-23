@@ -12,9 +12,10 @@ namespace KooliProjekt
             var builder = WebApplication.CreateBuilder(args);
             builder.Services.AddScoped<IEventService, EventService>();
             builder.Services.AddScoped<IInvoiceLineService, InvoiceLineService>();
-            builder.Services.AddScoped<IHomeService, HomeService>();
             builder.Services.AddScoped<IPlansService, PlansService>();
             builder.Services.AddScoped<IInvoicesService, InvoicesService>();
+            builder.Services.AddScoped<IProjectService, ProjectService>();
+            // Add Project Management services here later
 
 
             // Add services to the container.
@@ -59,7 +60,7 @@ namespace KooliProjekt
             using (var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>())
             {
                 context.Database.EnsureCreated();
-                SeedData.Generate(context, userManager);
+                // SeedData.Generate(context, userManager);
             }
             #endif
             app.Run();

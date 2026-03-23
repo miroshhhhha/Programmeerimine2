@@ -10,7 +10,8 @@ namespace KooliProjekt.UnitTests.ControllerTests
         public void Index_should_return_index_view()
         {
             // Arrange
-            var controller = new HomeController();
+            var logger = new Microsoft.Extensions.Logging.Abstractions.NullLogger<HomeController>();
+            var controller = new HomeController(logger);
 
             // Act
             var result = controller.Index() as ViewResult;
