@@ -8,110 +8,119 @@ using System.Linq;
 
 namespace KooliProjekt.WinForms
 {
-    public partial class Form1 : Form, IProjectView
+    public partial class Form1 : Form, IProjectView, IProjectTaskView, ITeamMemberView
     {
-        private ProjectPresenter _presenter;
-        private ApiClient _apiClient;
+        private ProjectPresenter _projectPresenter;
+        private ProjectTaskPresenter _taskPresenter;
+        private TeamMemberPresenter _memberPresenter;
 
         public Form1()
         {
             InitializeComponent();
-            _apiClient = new ApiClient();
-            _presenter = new ProjectPresenter(this);
-            InitializeDataGridView();
-            LoadProjects_Click(null, null);
+            _projectPresenter = new ProjectPresenter(this);
+            _taskPresenter = new ProjectTaskPresenter(this);
+            _memberPresenter = new TeamMemberPresenter(this);
+            
+            InitializeGrids();
+            LoadAll();
         }
 
-        private async void LoadProjects_Click(object sender, EventArgs e)
+        private void LoadAll()
         {
-            try
-            {
-                var projects = await _apiClient.GetAsync<Project>("ProjectsApi");
-                ProjectList.DataSource = projects;
-            }
-            catch (Exception ex)
-            {
-                ShowError($"Error loading projects: {ex.Message}");
-            }
+            _projectPresenter.LoadProjects();
+            _taskPresenter.LoadTasks();
+            _memberPresenter.LoadMembers();
         }
 
-        public void DisplayProjects(List<Project> projects)
+        private void InitializeGrids()
         {
-            ProjectList.DataSource = projects;
+            // Project Grid
+            ProjectList.AutoGenerateColumns = false;
+            ProjectList.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Name", HeaderText = "Name", Width = 200 });
+            ProjectList.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "StartDate", HeaderText = "Start", Width = 100 });
+            ProjectList.Columns.Add(new DataGridViewButtonColumn { Name = "Actions", HeaderText = "Actions", Text = "Edit/Delete", UseColumnTextForButtonValue = true });
+
+            // Task Grid
+            TaskList.AutoGenerateColumns = false;
+            TaskList.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Title", HeaderText = "Title", Width = 200 });
+            TaskList.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Status", HeaderText = "Status", Width = 100 });
+            TaskList.Columns.Add(new DataGridViewButtonColumn { Name = "Actions", HeaderText = "Actions", Text = "Edit/Delete", UseColumnTextForButtonValue = true });
+
+            // Member Grid
+            MemberList.AutoGenerateColumns = false;
+            MemberList.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Name", HeaderText = "Name", Width = 200 });
+            MemberList.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Email", HeaderText = "Email", Width = 200 });
+            MemberList.Columns.Add(new DataGridViewButtonColumn { Name = "Actions", HeaderText = "Actions", Text = "Edit/Delete", UseColumnTextForButtonValue = true });
         }
 
-        public void ShowError(string message)
-        {
-            MessageBox.Show(message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        }
+        public void DisplayProjects(List<Project> projects) => ProjectList.DataSource = projects;
+        public void DisplayTasks(List<ProjectTask> tasks) => TaskList.DataSource = tasks;
+        public void DisplayMembers(List<TeamMember> members) => MemberList.DataSource = members;
+        public void ShowError(string message) => MessageBox.Show(message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
+        #region Events
+
+        private async void LoadProjects_Click(object sender, EventArgs e) => await _projectPresenter.LoadProjects();
+        private async void LoadTasks_Click(object sender, EventArgs e) => await _taskPresenter.LoadTasks();
+        private async void LoadMembers_Click(object sender, EventArgs e) => await _memberPresenter.LoadMembers();
 
         private async void AddButton_Click(object sender, EventArgs e)
         {
-            var projectWindow = new KooliProjekt.WPF.ProjectWindow();
-            var result = projectWindow.ShowDialog();
-            if (result.HasValue)
-            {
-                await _presenter.AddProject(projectWindow.Project);
-                LoadProjects_Click(null, null);
-            }
+            var win = new KooliProjekt.WPF.ProjectWindow();
+            if (win.ShowDialog() == true) await _projectPresenter.AddProject(win.Project);
         }
 
-        private void InitializeDataGridView()
+        private async void AddTaskButton_Click(object sender, EventArgs e)
         {
-            ProjectList.AutoGenerateColumns = false;
-            ProjectList.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
-            ProjectList.AllowUserToAddRows = false;
-            ProjectList.AllowUserToDeleteRows = false;
-            ProjectList.ReadOnly = true;
+            var win = new KooliProjekt.WPF.ProjectTaskWindow();
+            if (win.ShowDialog() == true) await _taskPresenter.AddTask(win.Task);
+        }
 
-            ProjectList.Columns.Clear();
-
-            ProjectList.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Id", HeaderText = "ID", ReadOnly = true, Width = 50 });
-            ProjectList.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "Name", HeaderText = "Name", ReadOnly = true, Width = 200 });
-            ProjectList.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "StartDate", HeaderText = "Start Date", ReadOnly = true, Width = 100, DefaultCellStyle = { Format = "dd.MM.yyyy" } });
-            ProjectList.Columns.Add(new DataGridViewTextBoxColumn { DataPropertyName = "EndDate", HeaderText = "End Date", ReadOnly = true, Width = 100, DefaultCellStyle = { Format = "dd.MM.yyyy" } });
-
-            var actionsColumn = new DataGridViewButtonColumn
-            {
-                Name = "Actions",
-                HeaderText = "Actions",
-                Text = "Edit / Delete",
-                UseColumnTextForButtonValue = true,
-                Width = 100,
-                FlatStyle = FlatStyle.Flat
-            };
-            ProjectList.Columns.Add(actionsColumn);
+        private async void AddMemberButton_Click(object sender, EventArgs e)
+        {
+            var win = new KooliProjekt.WPF.TeamMemberWindow();
+            if (win.ShowDialog() == true) await _memberPresenter.AddMember(win.TeamMember);
         }
 
         private async void ProjectList_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.RowIndex >= 0 && e.ColumnIndex == ProjectList.Columns["Actions"].Index)
+            if (e.RowIndex < 0 || e.ColumnIndex != ProjectList.Columns["Actions"].Index) return;
+            var p = ProjectList.Rows[e.RowIndex].DataBoundItem as Project;
+            var res = MessageBox.Show("Edit (Yes) or Delete (No)?", "Action", MessageBoxButtons.YesNoCancel);
+            if (res == DialogResult.Yes)
             {
-                if (ProjectList.Rows[e.RowIndex].DataBoundItem is Project selectedProject)
-                {
-                    var choice = MessageBox.Show($"What do you want to do with project '{selectedProject.Name}'?", "Project Actions", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Question);
-
-                    if (choice == DialogResult.Yes)
-                    {
-                        var projectWindow = new KooliProjekt.WPF.ProjectWindow(selectedProject);
-                        var result = projectWindow.ShowDialog();
-                        if (result.HasValue)
-                        {
-                            await _presenter.EditProject(projectWindow.Project);
-                            LoadProjects_Click(null, null);
-                        }
-                    }
-                    else if (choice == DialogResult.No)
-                    {
-                        var confirmResult = MessageBox.Show($"Are you sure you want to delete {selectedProject.Name}?", "Confirm Delete", MessageBoxButtons.YesNo);
-                        if (confirmResult == DialogResult.Yes)
-                        {
-                            await _presenter.DeleteProject(selectedProject.Id);
-                            LoadProjects_Click(null, null);
-                        }
-                    }
-                }
+                var win = new KooliProjekt.WPF.ProjectWindow(p);
+                if (win.ShowDialog() == true) await _projectPresenter.EditProject(win.Project);
             }
+            else if (res == DialogResult.No) await _projectPresenter.DeleteProject(p.Id);
         }
+
+        private async void TaskList_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex < 0 || e.ColumnIndex != TaskList.Columns["Actions"].Index) return;
+            var t = TaskList.Rows[e.RowIndex].DataBoundItem as ProjectTask;
+            var res = MessageBox.Show("Edit (Yes) or Delete (No)?", "Action", MessageBoxButtons.YesNoCancel);
+            if (res == DialogResult.Yes)
+            {
+                var win = new KooliProjekt.WPF.ProjectTaskWindow(t);
+                if (win.ShowDialog() == true) await _taskPresenter.EditTask(win.Task);
+            }
+            else if (res == DialogResult.No) await _taskPresenter.DeleteTask(t.Id);
+        }
+
+        private async void MemberList_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex < 0 || e.ColumnIndex != MemberList.Columns["Actions"].Index) return;
+            var m = MemberList.Rows[e.RowIndex].DataBoundItem as TeamMember;
+            var res = MessageBox.Show("Edit (Yes) or Delete (No)?", "Action", MessageBoxButtons.YesNoCancel);
+            if (res == DialogResult.Yes)
+            {
+                var win = new KooliProjekt.WPF.TeamMemberWindow(m);
+                if (win.ShowDialog() == true) await _memberPresenter.EditMember(win.TeamMember);
+            }
+            else if (res == DialogResult.No) await _memberPresenter.DeleteMember(m.Id);
+        }
+
+        #endregion
     }
 }

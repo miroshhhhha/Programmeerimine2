@@ -19,10 +19,11 @@ namespace KooliProjekt.Controllers
             _memberService = memberService;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int page = 1, string searchTerm = null)
         {
-            var tasks = await _taskService.GetAllTasksAsync();
-            return View(tasks);
+            var pagedResult = await _taskService.GetTasksPagedAsync(page, 10, searchTerm);
+            ViewBag.SearchTerm = searchTerm;
+            return View(pagedResult);
         }
 
         public async Task<IActionResult> Create()

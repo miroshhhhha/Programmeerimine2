@@ -6,6 +6,7 @@ namespace KooliProjekt.Services
 {
     public interface IProjectTaskService
     {
+        Task<PagedResult<ProjectTask>> GetTasksPagedAsync(int page, int pageSize, string searchTerm = null);
         Task<List<ProjectTask>> GetAllTasksAsync();
         Task<ProjectTask> GetTaskByIdAsync(int id);
         Task AddTaskAsync(ProjectTask task);

@@ -1,4 +1,4 @@
-@model IEnumerable<KooliProjekt.Models.ProjectTask>
+@model KooliProjekt.Models.PagedResult<KooliProjekt.Models.ProjectTask>
 
 @{
     ViewData["Title"] = "Tasks";
@@ -6,9 +6,25 @@
 
 <div class="container mt-5">
     <h2>Task List</h2>
-    <p>
-        <a asp-action="Create" class="btn btn-primary">Create New Task</a>
-    </p>
+    
+    <div class="row mb-3">
+        <div class="col-md-6">
+            <a asp-action="Create" class="btn btn-primary">Create New Task</a>
+        </div>
+        <div class="col-md-6 text-end">
+            <form asp-action="Index" method="get" class="d-inline-block">
+                <div class="input-group">
+                    <input type="text" name="searchTerm" class="form-control" placeholder="Search..." value="@ViewBag.SearchTerm">
+                    <button class="btn btn-outline-secondary" type="submit">Search</button>
+                    @if (!string.IsNullOrEmpty(ViewBag.SearchTerm))
+                    {
+                        <a asp-action="Index" class="btn btn-outline-danger">Clear</a>
+                    }
+                </div>
+            </form>
+        </div>
+    </div>
+
     <table class="table table-striped">
         <thead>
             <tr>
@@ -21,7 +37,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var item in Model) {
+            @foreach (var item in Model.Results) {
                 <tr>
                     <td>@item.Title</td>
                     <td>@(item.Project?.Name ?? "N/A")</td>
@@ -36,4 +52,18 @@
             }
         </tbody>
     </table>
+
+    @if (Model.PageCount > 1)
+    {
+        <nav aria-label="Page navigation">
+            <ul class="pagination">
+                @for (int i = 1; i <= Model.PageCount; i++)
+                {
+                    <li class="page-item @(i == Model.CurrentPage ? "active" : "")">
+                        <a class="page-item page-link" asp-action="Index" asp-route-page="@i" asp-route-searchTerm="@ViewBag.SearchTerm">@i</a>
+                    </li>
+                }
+            </ul>
+        </nav>
+    }
 </div>

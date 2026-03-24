@@ -15,6 +15,18 @@ namespace KooliProjekt.Services
             _context = context;
         }
 
+        public async Task<PagedResult<TeamMember>> GetMembersPagedAsync(int page, int pageSize, string searchTerm = null)
+        {
+            var query = _context.TeamMembers.AsQueryable();
+
+            if (!string.IsNullOrEmpty(searchTerm))
+            {
+                query = query.Where(m => m.Name.Contains(searchTerm) || m.Email.Contains(searchTerm));
+            }
+
+            return await query.OrderBy(m => m.Name).ToPagedResult(page, pageSize);
+        }
+
         public async Task<List<TeamMember>> GetAllMembersAsync()
         {
             return await _context.TeamMembers.ToListAsync();

@@ -1,38 +1,100 @@
 <Window x:Class="KooliProjekt.WPF.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:KooliProjekt.WPF"
-        mc:Ignorable="d"
-        Title="Project Management System" Height="450" Width="800">
+        Title="Project Management Client" Height="600" Width="800">
     <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
+        <TabControl>
+            <!-- Projects Tab -->
+            <TabItem Header="Projects">
+                <Grid Margin="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="0,0,0,10">
+                        <Button Content="Load Projects" Width="100" Margin="0,0,5,0" Click="LoadProjects_Click"/>
+                        <Button Content="Add Project" Width="100" Margin="0,0,5,0" Click="AddProject_Click"/>
+                    </StackPanel>
+                    <DataGrid x:Name="ProjectsGrid" Grid.Row="1" AutoGenerateColumns="False" IsReadOnly="True">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*"/>
+                            <DataGridTextColumn Header="Start" Binding="{Binding StartDate, StringFormat=d}" Width="100"/>
+                            <DataGridTextColumn Header="End" Binding="{Binding EndDate, StringFormat=d}" Width="100"/>
+                            <DataGridTemplateColumn Header="Actions" Width="150">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <Button Content="Edit" Margin="2" Click="EditProject_Click"/>
+                                            <Button Content="Delete" Margin="2" Click="DeleteProject_Click"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
 
-        <StackPanel Orientation="Horizontal" Margin="10">
-            <Button Content="Load Projects" Click="LoadProjects_Click" Width="100" Margin="0,0,10,0"/>
-            <Button Content="Add Project" Click="AddProject_Click" Width="100" Margin="0,0,10,0"/>
-        </StackPanel>
+            <!-- Tasks Tab -->
+            <TabItem Header="Tasks">
+                <Grid Margin="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="0,0,0,10">
+                        <Button Content="Load Tasks" Width="100" Margin="0,0,5,0" Click="LoadTasks_Click"/>
+                        <Button Content="Add Task" Width="100" Margin="0,0,5,0" Click="AddTask_Click"/>
+                    </StackPanel>
+                    <DataGrid x:Name="TasksGrid" Grid.Row="1" AutoGenerateColumns="False" IsReadOnly="True">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Title" Binding="{Binding Title}" Width="*"/>
+                            <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="100"/>
+                            <DataGridTextColumn Header="Priority" Binding="{Binding Priority}" Width="100"/>
+                            <DataGridTemplateColumn Header="Actions" Width="150">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <Button Content="Edit" Margin="2" Click="EditTask_Click"/>
+                                            <Button Content="Delete" Margin="2" Click="DeleteTask_Click"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
 
-        <DataGrid x:Name="ProjectsGrid" Grid.Row="1" Margin="10" AutoGenerateColumns="False" IsReadOnly="True">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="50"/>
-                <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*"/>
-                <DataGridTextColumn Header="Start Date" Binding="{Binding StartDate, StringFormat={}{0:dd.MM.yyyy}}" Width="150"/>
-                <DataGridTemplateColumn Header="Actions" Width="150">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <StackPanel Orientation="Horizontal">
-                                <Button Content="Edit" Click="EditProject_Click" Margin="2"/>
-                                <Button Content="Delete" Click="DeleteProject_Click" Margin="2" Background="LightPink"/>
-                            </StackPanel>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-            </DataGrid.Columns>
-        </DataGrid>
+            <!-- Team Members Tab -->
+            <TabItem Header="Team">
+                <Grid Margin="10">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <StackPanel Orientation="Horizontal" Grid.Row="0" Margin="0,0,0,10">
+                        <Button Content="Load Members" Width="100" Margin="0,0,5,0" Click="LoadMembers_Click"/>
+                        <Button Content="Add Member" Width="100" Margin="0,0,5,0" Click="AddMember_Click"/>
+                    </StackPanel>
+                    <DataGrid x:Name="MembersGrid" Grid.Row="1" AutoGenerateColumns="False" IsReadOnly="True">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*"/>
+                            <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="*"/>
+                            <DataGridTemplateColumn Header="Actions" Width="150">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <Button Content="Edit" Margin="2" Click="EditMember_Click"/>
+                                            <Button Content="Delete" Margin="2" Click="DeleteMember_Click"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
+        </TabControl>
     </Grid>
 </Window>
