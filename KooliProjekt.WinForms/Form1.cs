@@ -73,6 +73,7 @@ namespace KooliProjekt.WinForms
         private async void AddTaskButton_Click(object sender, EventArgs e)
         {
             var win = new KooliProjekt.WPF.ProjectTaskWindow();
+            
             if (win.ShowDialog() == true) await _taskPresenter.AddTask(win.Task);
         }
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using KooliProjekt.Controllers;
 using KooliProjekt.Data;
+using KooliProjekt.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -25,14 +26,21 @@ namespace KooliProjekt.IntegrationTests.Helpers
             var dbGuid = Guid.NewGuid().ToString();
             services.AddDbContext<ApplicationDbContext>(options =>
             {
-                options.UseSqlServer(Configuration.GetConnectionString("TestConnection"));
+                options.UseInMemoryDatabase(dbGuid);
             });
 
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                     .AddEntityFrameworkStores<ApplicationDbContext>();
 
-            //services.AddAutoMapper(GetType().Assembly);
+            services.AddScoped<IProjectService, ProjectService>();
+            services.AddScoped<IProjectTaskService, ProjectTaskService>();
+            services.AddScoped<ITeamMemberService, TeamMemberService>();
+
             services.AddControllersWithViews()
+                    .AddNewtonsoftJson(options =>
+                    {
+                        options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+                    })
                     .AddApplicationPart(typeof(HomeController).Assembly);
 
             //services.AddScoped<IFileClient, LocalFileClient>();
@@ -60,11 +68,6 @@ namespace KooliProjekt.IntegrationTests.Helpers
                 if (dbContext == null)
                 {
                     throw new NullReferenceException("Cannot get instance of dbContext");
-                }
-
-                if (dbContext.Database.GetDbConnection().ConnectionString.ToLower().Contains("my.db"))
-                {
-                    throw new Exception("LIVE SETTINGS IN TESTS!");
                 }
 
                 //EnsureDatabase(dbContext);
