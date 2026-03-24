@@ -15,12 +15,5 @@ namespace KooliProjekt.Data
         public DbSet<KooliProjekt.Models.Project> Projects { get; set; }
         public DbSet<KooliProjekt.Models.ProjectTask> ProjectTasks { get; set; }
         public DbSet<KooliProjekt.Models.TeamMember> TeamMembers { get; set; }
-
-        public DbSet<IdentityUser> Customers { get; set; }
-        public DbSet<Invoice> Invoices { get; set; }
-        public DbSet<InvoiceLine> InvoicesLine { get; set; }
-        public DbSet<KooliProjekt.Data.Event> Event { get; set; } = default!;
-        public DbSet<KooliProjekt.Data.Plan> Plan { get; set; } = default!;
-        public object Plans { get; internal set; }
     }
 }

@@ -10,10 +10,6 @@ namespace KooliProjekt
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-            builder.Services.AddScoped<IEventService, EventService>();
-            builder.Services.AddScoped<IInvoiceLineService, InvoiceLineService>();
-            builder.Services.AddScoped<IPlansService, PlansService>();
-            builder.Services.AddScoped<IInvoicesService, InvoicesService>();
             builder.Services.AddScoped<IProjectService, ProjectService>();
             builder.Services.AddScoped<IProjectTaskService, ProjectTaskService>();
             builder.Services.AddScoped<ITeamMemberService, TeamMemberService>();
