@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 
 namespace KooliProjekt.WPF
 {
-    public class ApiClient
+    public class ApiClient : IApiClient
     {
         private readonly HttpClient _client;
         private const string BaseUrl = "https://localhost:7136/api/";
